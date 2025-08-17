@@ -1,0 +1,139 @@
+---
+interface Props {
+  title: string;
+  url: string;
+  slug: string;
+}
+
+const { title, url, slug } = Astro.props;
+---
+
+<div class="flex items-center justify-between py-6 border-t border-b border-gray-200 dark:border-gray-700 my-8">
+  <div class="flex items-center space-x-4">
+    <button id="like-btn" class="flex items-center space-x-2 px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors" data-slug={slug}>
+      <svg class="w-5 h-5 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+      </svg>
+      <span id="like-count" class="text-sm font-medium text-gray-700 dark:text-gray-300">0</span>
+    </button>
+    
+    <button id="save-btn" class="flex items-center space-x-2 px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors" data-slug={slug}>
+      <svg class="w-5 h-5 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path>
+      </svg>
+      <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Save</span>
+    </button>
+  </div>
+  
+  <div class="flex items-center space-x-2">
+    <button id="share-btn" class="flex items-center space-x-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors">
+      <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+        <path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z"></path>
+      </svg>
+      <span class="text-sm font-medium">Share</span>
+    </button>
+  </div>
+</div>
+
+<script define:vars={{title, url, slug}}>
+  document.addEventListener('DOMContentLoaded', () => {
+    const likeBtn = document.getElementById('like-btn');
+    const saveBtn = document.getElementById('save-btn');
+    const shareBtn = document.getElementById('share-btn');
+    const likeCount = document.getElementById('like-count');
+    
+    // Load saved state
+    const likes = JSON.parse(localStorage.getItem(`blog-likes-${slug}`)) || 0;
+    const isLiked = JSON.parse(localStorage.getItem(`blog-liked-${slug}`)) || false;
+    const isSaved = JSON.parse(localStorage.getItem(`blog-saved-${slug}`)) || false;
+    
+    likeCount.textContent = likes;
+    
+    // Update UI based on saved state
+    if (isLiked) {
+      likeBtn.querySelector('svg').classList.add('text-red-500', 'fill-current');
+      likeBtn.classList.add('text-red-500');
+    }
+    
+    if (isSaved) {
+      saveBtn.querySelector('svg').classList.add('text-blue-500', 'fill-current');
+      saveBtn.querySelector('span').textContent = 'Saved';
+      saveBtn.classList.add('text-blue-500');
+    }
+    
+    // Like functionality
+    likeBtn.addEventListener('click', () => {
+      const currentLikes = parseInt(likeCount.textContent);
+      const isCurrentlyLiked = likeBtn.classList.contains('text-red-500');
+      
+      if (isCurrentlyLiked) {
+        // Unlike
+        likeCount.textContent = Math.max(0, currentLikes - 1);
+        likeBtn.querySelector('svg').classList.remove('text-red-500', 'fill-current');
+        likeBtn.classList.remove('text-red-500');
+        localStorage.setItem(`blog-likes-${slug}`, JSON.stringify(Math.max(0, currentLikes - 1)));
+        localStorage.setItem(`blog-liked-${slug}`, 'false');
+      } else {
+        // Like
+        likeCount.textContent = currentLikes + 1;
+        likeBtn.querySelector('svg').classList.add('text-red-500', 'fill-current');
+        likeBtn.classList.add('text-red-500');
+        localStorage.setItem(`blog-likes-${slug}`, JSON.stringify(currentLikes + 1));
+        localStorage.setItem(`blog-liked-${slug}`, 'true');
+      }
+    });
+    
+    // Save functionality
+    saveBtn.addEventListener('click', () => {
+      const isCurrentlySaved = saveBtn.classList.contains('text-blue-500');
+      
+      if (isCurrentlySaved) {
+        saveBtn.querySelector('svg').classList.remove('text-blue-500', 'fill-current');
+        saveBtn.querySelector('span').textContent = 'Save';
+        saveBtn.classList.remove('text-blue-500');
+        localStorage.setItem(`blog-saved-${slug}`, 'false');
+      } else {
+        saveBtn.querySelector('svg').classList.add('text-blue-500', 'fill-current');
+        saveBtn.querySelector('span').textContent = 'Saved';
+        saveBtn.classList.add('text-blue-500');
+        localStorage.setItem(`blog-saved-${slug}`, 'true');
+      }
+    });
+    
+    // Share functionality
+    shareBtn.addEventListener('click', async () => {
+      if (navigator.share) {
+        try {
+          await navigator.share({
+            title: title,
+            url: window.location.href
+          });
+        } catch (err) {
+          fallbackShare();
+        }
+      } else {
+        fallbackShare();
+      }
+    });
+    
+    function fallbackShare() {
+      navigator.clipboard.writeText(window.location.href).then(() => {
+        shareBtn.innerHTML = `
+          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+          </svg>
+          <span class="text-sm font-medium">Copied!</span>
+        `;
+        
+        setTimeout(() => {
+          shareBtn.innerHTML = `
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z"></path>
+            </svg>
+            <span class="text-sm font-medium">Share</span>
+          `;
+        }, 2000);
+      });
+    }
+  });
+</script>

@@ -1,0 +1,80 @@
+---
+interface Props {
+  headings: any[];
+}
+
+const { headings } = Astro.props;
+---
+
+{headings.length > 0 && (
+  <div class="toc-container sticky top-24 hidden lg:block">
+    <div class="glass rounded-xl p-6 max-w-xs">
+      <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Table of Contents</h3>
+      <nav class="space-y-2">
+        {headings.map((heading) => (
+          <a 
+            href={`#${heading.slug}`}
+            class={`toc-link block text-sm hover:text-primary-600 dark:hover:text-primary-400 transition-colors ${
+              heading.depth === 1 ? 'font-medium text-gray-900 dark:text-white' :
+              heading.depth === 2 ? 'ml-4 text-gray-700 dark:text-gray-300' :
+              'ml-8 text-gray-600 dark:text-gray-400'
+            }`}
+            data-heading={heading.slug}
+          >
+            {heading.text}
+          </a>
+        ))}
+      </nav>
+    </div>
+  </div>
+)}
+
+<script>
+  // Reading progress and TOC highlighting
+  document.addEventListener('DOMContentLoaded', () => {
+    const progressBar = document.getElementById('reading-progress');
+    const tocLinks = document.querySelectorAll('.toc-link');
+    const headings = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
+    
+    // Update reading progress
+    function updateReadingProgress() {
+      const winHeight = window.innerHeight;
+      const docHeight = document.documentElement.scrollHeight;
+      const scrollTop = window.pageYOffset;
+      const trackLength = docHeight - winHeight;
+      const pctScrolled = Math.floor(scrollTop / trackLength * 100);
+      
+      if (progressBar) {
+        progressBar.style.width = pctScrolled + '%';
+      }
+    }
+    
+    // Highlight active TOC item
+    function updateTOC() {
+      let current = '';
+      
+      headings.forEach((heading) => {
+        const rect = heading.getBoundingClientRect();
+        if (rect.top <= 100) {
+          current = heading.id;
+        }
+      });
+      
+      tocLinks.forEach((link) => {
+        link.classList.remove('text-primary-600', 'dark:text-primary-400', 'font-medium');
+        if (link.getAttribute('data-heading') === current) {
+          link.classList.add('text-primary-600', 'dark:text-primary-400', 'font-medium');
+        }
+      });
+    }
+    
+    window.addEventListener('scroll', () => {
+      updateReadingProgress();
+      updateTOC();
+    });
+    
+    // Initialize
+    updateReadingProgress();
+    updateTOC();
+  });
+</script>

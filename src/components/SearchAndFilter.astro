@@ -1,0 +1,190 @@
+<div class="mb-8 space-y-4">
+  <div class="relative">
+    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+      <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+      </svg>
+    </div>
+    <input 
+      type="text" 
+      id="search-input"
+      placeholder="Search articles..." 
+      class="block w-full pl-10 pr-3 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+    />
+  </div>
+  
+  <div class="flex flex-wrap gap-3">
+    <button class="filter-btn active px-4 py-2 text-sm font-medium rounded-lg transition-all" data-category="all">
+      All Articles
+    </button>
+    <button class="filter-btn px-4 py-2 text-sm font-medium rounded-lg transition-all" data-category="JavaScript">
+      JavaScript
+    </button>
+    <button class="filter-btn px-4 py-2 text-sm font-medium rounded-lg transition-all" data-category="React">
+      React
+    </button>
+    <button class="filter-btn px-4 py-2 text-sm font-medium rounded-lg transition-all" data-category="Node.js">
+      Node.js
+    </button>
+    <button class="filter-btn px-4 py-2 text-sm font-medium rounded-lg transition-all" data-category="DevOps">
+      DevOps
+    </button>
+    <button class="filter-btn px-4 py-2 text-sm font-medium rounded-lg transition-all" data-category="Web Development">
+      Web Development
+    </button>
+  </div>
+</div>
+
+<style>
+  .filter-btn {
+    @apply bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-primary-100 dark:hover:bg-primary-900/30 hover:text-primary-600 dark:hover:text-primary-400;
+  }
+  
+  .filter-btn.active {
+    @apply bg-primary-600 text-white hover:bg-primary-700;
+  }
+</style>
+
+<script>
+  import Fuse from 'fuse.js';
+
+  let allPosts = [];
+  let fuse;
+
+  // Initialize search and filter functionality
+  document.addEventListener('DOMContentLoaded', async () => {
+    // Get all blog posts data
+    const response = await fetch('/api/posts.json');
+    allPosts = await response.json();
+    
+    // Initialize Fuse.js for fuzzy search
+    fuse = new Fuse(allPosts, {
+      keys: ['frontmatter.title', 'frontmatter.description', 'frontmatter.category'],
+      threshold: 0.3,
+      includeScore: true
+    });
+
+    // Setup event listeners
+    const searchInput = document.getElementById('search-input');
+    const filterButtons = document.querySelectorAll('.filter-btn');
+
+    searchInput.addEventListener('input', handleSearch);
+    filterButtons.forEach(btn => btn.addEventListener('click', handleFilter));
+  });
+
+  function handleSearch(e) {
+    const query = e.target.value.trim();
+    const activeCategory = document.querySelector('.filter-btn.active').dataset.category;
+    
+    let filteredPosts = allPosts;
+    
+    if (query) {
+      const searchResults = fuse.search(query);
+      filteredPosts = searchResults.map(result => result.item);
+    }
+    
+    if (activeCategory !== 'all') {
+      filteredPosts = filteredPosts.filter(post => post.frontmatter.category === activeCategory);
+    }
+    
+    renderPosts(filteredPosts);
+  }
+
+  function handleFilter(e) {
+    // Update active state
+    document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+    e.target.classList.add('active');
+    
+    const category = e.target.dataset.category;
+    const searchQuery = document.getElementById('search-input').value.trim();
+    
+    let filteredPosts = allPosts;
+    
+    if (searchQuery) {
+      const searchResults = fuse.search(searchQuery);
+      filteredPosts = searchResults.map(result => result.item);
+    }
+    
+    if (category !== 'all') {
+      filteredPosts = filteredPosts.filter(post => post.frontmatter.category === category);
+    }
+    
+    renderPosts(filteredPosts);
+  }
+
+  function renderPosts(posts) {
+    const postsContainer = document.getElementById('posts-container');
+    
+    if (posts.length === 0) {
+      postsContainer.innerHTML = `
+        <div class="col-span-full text-center py-12">
+          <div class="text-6xl mb-4">📝</div>
+          <h3 class="text-xl font-medium text-gray-900 dark:text-white mb-2">No articles found</h3>
+          <p class="text-gray-600 dark:text-gray-400">Try adjusting your search or filter criteria</p>
+        </div>
+      `;
+      return;
+    }
+    
+    postsContainer.innerHTML = posts.map(post => `
+      <article class="group relative overflow-hidden rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-800/50 shadow-sm hover:shadow-xl transition-all duration-300">
+        <a href="${post.url}" class="block">
+          <div class="p-6">
+            <div class="flex items-center justify-between mb-4">
+              <div class="flex items-center space-x-2">
+                <span class="px-3 py-1 text-xs font-medium bg-primary-100 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 rounded-full">
+                  ${post.frontmatter.category}
+                </span>
+                <span class="text-sm text-gray-500 dark:text-gray-400">
+                  ${post.frontmatter.readTime} min read
+                </span>
+              </div>
+              ${post.frontmatter.version ? `
+                <span class="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded">
+                  v${post.frontmatter.version}
+                </span>
+              ` : ''}
+            </div>
+
+            <h3 class="text-xl font-bold text-gray-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors mb-3">
+              ${post.frontmatter.title}
+            </h3>
+            
+            <p class="text-sm text-gray-600 dark:text-gray-300 mb-4 line-clamp-3">
+              ${post.frontmatter.description}
+            </p>
+
+            <div class="flex items-center justify-between">
+              <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 bg-gradient-to-br from-primary-500 to-accent-500 rounded-full flex items-center justify-center">
+                  <span class="text-white text-sm font-medium">
+                    ${post.frontmatter.author.name.charAt(0)}
+                  </span>
+                </div>
+                <div>
+                  <p class="text-sm font-medium text-gray-900 dark:text-white">${post.frontmatter.author.name}</p>
+                  <p class="text-xs text-gray-500 dark:text-gray-400">${post.frontmatter.pubDate}</p>
+                </div>
+              </div>
+              
+              <div class="flex items-center space-x-4 text-gray-500 dark:text-gray-400">
+                <div class="flex items-center space-x-1">
+                  <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"></path>
+                  </svg>
+                  <span class="text-xs">${post.frontmatter.likes || 0}</span>
+                </div>
+                <div class="flex items-center space-x-1">
+                  <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z"></path>
+                  </svg>
+                  <span class="text-xs">${post.frontmatter.shares || 0}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </a>
+      </article>
+    `).join('');
+  }
+</script>
