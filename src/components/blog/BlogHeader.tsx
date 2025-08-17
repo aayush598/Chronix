@@ -29,7 +29,7 @@ export function BlogHeader({ searchQuery, onSearchChange }: BlogHeaderProps) {
             </div>
             <div>
               <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">
-                DevBlog
+                Chronix
               </h1>
               <p className="text-xs text-gray-600 dark:text-gray-400">
                 Modern Web Development

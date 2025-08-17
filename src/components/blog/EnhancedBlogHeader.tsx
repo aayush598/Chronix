@@ -74,7 +74,7 @@ export function EnhancedBlogHeader({ searchQuery, onSearchChange }: EnhancedBlog
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.2 }}
                   >
-                    DevBlog
+                    Chronix
                   </motion.h1>
                   <motion.p 
                     className="text-xs text-gray-600 dark:text-gray-400 flex items-center gap-1"

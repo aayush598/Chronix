@@ -256,7 +256,7 @@ function App() {
               whileInView={{ opacity: 1 }}
               transition={{ duration: 0.6, delay: 0.3 }}
             >
-              © 2025 DevBlog. Made with React and modern web technologies.
+              © 2025 Chronix. Made with React and modern web technologies.
             </motion.p>
           </div>
         </div>
