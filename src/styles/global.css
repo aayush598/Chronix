@@ -57,3 +57,25 @@ html {
   z-index: 50;
   transition: width 0.1s ease-out;
 }
+
+/* Ensure normal text adapts in dark/light mode */
+.prose p,
+.prose li,
+.prose span,
+.prose strong,
+.prose em {
+  color: inherit;
+}
+
+.dark .prose p,
+.dark .prose li,
+.dark .prose span,
+.dark .prose strong,
+.dark .prose em {
+  color: #ffffff; /* white text in dark mode */
+}
+
+.prose p,
+.prose li {
+  color: #000000; /* black text in light mode */
+}
