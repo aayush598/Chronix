@@ -56,6 +56,9 @@
     // Get all blog posts data
     const response = await fetch('/api/posts.json');
     allPosts = await response.json();
+
+    // Initial render: show all posts
+    renderPosts(allPosts)
     
     // Initialize Fuse.js for fuzzy search
     fuse = new Fuse(allPosts, {
