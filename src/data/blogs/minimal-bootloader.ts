@@ -428,6 +428,6 @@ export const interactiveReactTypescriptComponents: Blog = {
   updatedAt: '2025-08-23T00:00:00Z',
   readingTime: 15,
   tags: ['bootloader', 'assembly', 'x86', 'osdev', 'bios', 'low-level'],
-  coverImage: '../public/images/simple-bootloader.png',
+  coverImage: '/images/simple-bootloader.png',
   featured: true
 };

@@ -5,7 +5,7 @@ export const authors: Record<string, BlogAuthor> = {
     id: 'aayush',
     name: 'Aayush Gid',
     bio: 'Frontend architect with 8+ years of experience in React, TypeScript, and modern web technologies.',
-    avatar: '../public/images/aayushgid.png',
+    avatar: '/images/aayushgid.png',
     socialLinks: {
       twitter: 'https://x.com/AayushGid598',
       linkedin: 'https://www.linkedin.com/in/aayush-gid-3767a2221/',
