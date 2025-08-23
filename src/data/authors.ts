@@ -4,7 +4,7 @@ export const authors: Record<string, BlogAuthor> = {
   aayush: {
     id: 'aayush',
     name: 'Aayush Gid',
-    bio: '[cite_start]Full-stack developer specializing in AI, ML, and hardware, with expertise in Python, C, C++, and Verilog[cite: 66, 68].',
+    bio: 'Full-stack developer specializing in AI, ML, and hardware, with expertise in Python, C, C++, and Verilog[cite: 66, 68].',
     avatar: '/images/aayushgid.png',
     socialLinks: {
       twitter: 'https://x.com/AayushGid598',
