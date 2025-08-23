@@ -5,12 +5,12 @@ export const authors: Record<string, BlogAuthor> = {
     id: 'aayush',
     name: 'Aayush Gid',
     bio: 'Frontend architect with 8+ years of experience in React, TypeScript, and modern web technologies.',
-    avatar: 'https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop',
+    avatar: 'src/assets/images/aayushgid.png',
     socialLinks: {
-      twitter: 'https://twitter.com/johnsmith',
-      linkedin: 'https://linkedin.com/in/johnsmith',
-      github: 'https://github.com/johnsmith',
-      website: 'https://johnsmith.dev'
+      twitter: 'https://x.com/AayushGid598',
+      linkedin: 'https://www.linkedin.com/in/aayush-gid-3767a2221/',
+      github: 'https://github.com/aayush598',
+      website: 'https://aayushgid.vercel.app/'
     }
   },
   john: {
