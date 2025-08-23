@@ -7,14 +7,14 @@ export const interactiveReactTypescriptComponents: Blog = {
   slug: 'simple-bootloader',
   excerpt: 'Step-by-step guide to building a simple bootloader in x86 assembly that prints messages and reads disk sectors using BIOS interrupts.',
   content: [
-    { id: '1', type: 'heading', content: { level: 1, text: 'Introduction' } },
+    { id: '1', type: 'heading', content: { level: 1, text: '1. Introduction' } },
     {
       id: '2',
       type: 'text',
       content:
         'When you press the power button, the CPU does not automatically know how to load your operating system. Instead, it follows a defined boot process. At the heart of this process is a small but powerful program: the bootloader. In this project, you will build a simple Stage-1 bootloader in x86 assembly that prints messages and reads a disk sector via BIOS interrupts.'
     },
-    { id: '3', type: 'heading', content: { level: 2, text: 'What is a Bootloader?' } },
+    { id: '3', type: 'heading', content: { level: 2, text: '1.1 What is a Bootloader?' } },
     {
       id: '4',
       type: 'text',
@@ -31,14 +31,14 @@ export const interactiveReactTypescriptComponents: Blog = {
           'Think of the bootloader as the table of contents of a book—it’s the first thing you see and it points the system to what comes next.'
       }
     },
-    { id: '6', type: 'heading', content: { level: 2, text: 'Why Bootloaders Matter' } },
+    { id: '6', type: 'heading', content: { level: 2, text: '1.2 Why Bootloaders Matter' } },
     {
       id: '7',
       type: 'text',
       content:
         'Without a bootloader, the CPU would not know where the operating system is stored, how to load it into memory, or what to execute next. The BIOS performs basic hardware initialization and loads the boot sector; the bootloader then takes over and directs execution.'
     },
-    { id: '8', type: 'heading', content: { level: 2, text: 'What You Will Build' } },
+    { id: '8', type: 'heading', content: { level: 2, text: '1.3 What You Will Build' } },
     {
       id: '9',
       type: 'text',
@@ -57,7 +57,7 @@ export const interactiveReactTypescriptComponents: Blog = {
         ]
       }
     },
-    { id: '11', type: 'heading', content: { level: 2, text: 'Tools Required' } },
+    { id: '11', type: 'heading', content: { level: 2, text: '1.4 Tools Required' } },
     {
       id: '12',
       type: 'list',
@@ -79,8 +79,8 @@ export const interactiveReactTypescriptComponents: Blog = {
       }
     },
 
-    { id: '20', type: 'heading', content: { level: 1, text: 'Background Knowledge (For Beginners)' } },
-    { id: '21', type: 'heading', content: { level: 2, text: 'How a Computer Boots' } },
+    { id: '20', type: 'heading', content: { level: 1, text: '2. Background Knowledge (For Beginners)' } },
+    { id: '21', type: 'heading', content: { level: 2, text: '2.1 How a Computer Boots' } },
     {
       id: '22',
       type: 'list',
@@ -94,21 +94,21 @@ export const interactiveReactTypescriptComponents: Blog = {
         ]
       }
     },
-    { id: '23', type: 'heading', content: { level: 2, text: 'Real Mode and 16-bit Basics' } },
+    { id: '23', type: 'heading', content: { level: 2, text: '2.2 Real Mode and 16-bit Basics' } },
     {
       id: '24',
       type: 'text',
       content:
         'At reset, the CPU runs in 16-bit Real Mode with segment:offset addressing and access to the first 1 MB. Common registers include AX, BX, CX, DX, SI, DI, BP, SP, and segment registers DS, ES, SS, CS with IP as the instruction pointer.'
     },
-    { id: '25', type: 'heading', content: { level: 2, text: 'Segmentation and Addressing' } },
+    { id: '25', type: 'heading', content: { level: 2, text: '2.3 Segmentation and Addressing' } },
     {
       id: '26',
       type: 'text',
       content:
         'Physical Address = (Segment × 16) + Offset. Common pairs: DS:SI for strings/data, ES:BX for disk/memory buffers, CS:IP for code.'
     },
-    { id: '27', type: 'heading', content: { level: 2, text: 'BIOS Interrupts Overview' } },
+    { id: '27', type: 'heading', content: { level: 2, text: '2.4 BIOS Interrupts Overview' } },
     {
       id: '28',
       type: 'text',
@@ -124,7 +124,7 @@ export const interactiveReactTypescriptComponents: Blog = {
           "; Print 'A'\nmov ah, 0x0E\nmov al, 'A'\nint 0x10\n\n; Read one sector\nmov ah, 0x02\nmov al, 0x01\nmov ch, 0x00\nmov cl, 0x02\nmov dh, 0x00\nmov dl, 0x00\nmov bx, 0x0500\nmov es, 0x0000\nint 0x13"
       }
     },
-    { id: '30', type: 'heading', content: { level: 2, text: 'Boot Sector Rules and Disk Structure' } },
+    { id: '30', type: 'heading', content: { level: 2, text: '2.5 Boot Sector Rules and Disk Structure' } },
     {
       id: '31',
       type: 'text',
@@ -132,8 +132,8 @@ export const interactiveReactTypescriptComponents: Blog = {
         'A boot sector is 512 bytes and must end with 0xAA55. Legacy BIOS uses CHS (Cylinder, Head, Sector) addressing; sector numbering starts at 1. Modern disks use LBA, but we will use CHS with BIOS services in Real Mode.'
     },
 
-    { id: '40', type: 'heading', content: { level: 1, text: 'Source Code Overview' } },
-    { id: '41', type: 'heading', content: { level: 2, text: 'Project Structure' } },
+    { id: '40', type: 'heading', content: { level: 1, text: '3.Source Code Overview' } },
+    { id: '41', type: 'heading', content: { level: 2, text: '3.1  Structure' } },
     {
       id: '42',
       type: 'code',
@@ -150,15 +150,15 @@ export const interactiveReactTypescriptComponents: Blog = {
         '• print.asm provides reusable `print_char` and `print_string` using INT 0x10. • disk_read.asm implements `read_sector` using INT 0x13 with minimal error handling. • stage1_bootloader.asm initializes segments, prints a message, reads sector 2 into memory (e.g., 0x0500), prints its contents, then loops forever.'
     },
 
-    { id: '50', type: 'heading', content: { level: 1, text: 'Printing Functions (print.asm)' } },
-    { id: '51', type: 'heading', content: { level: 2, text: 'Why Reusable Print Routines' } },
+    { id: '50', type: 'heading', content: { level: 1, text: '4.Printing Functions (print.asm)' } },
+    { id: '51', type: 'heading', content: { level: 2, text: '4.1 Why Reusable Print Routines' } },
     {
       id: '52',
       type: 'text',
       content:
         'Separating printing keeps the bootloader focused, enables reuse for messages and errors, and makes future enhancements (like colors) localized.'
     },
-    { id: '53', type: 'heading', content: { level: 2, text: 'print_char (INT 0x10 Teletype)' } },
+    { id: '53', type: 'heading', content: { level: 2, text: '4.2 print_char (INT 0x10 Teletype)' } },
     {
       id: '54',
       type: 'code',
@@ -168,7 +168,7 @@ export const interactiveReactTypescriptComponents: Blog = {
           'print_char:\n    ; AL = character\n    mov ah, 0x0E\n    mov bh, 0x00\n    mov bl, 0x07\n    int 0x10\n    ret'
       }
     },
-    { id: '55', type: 'heading', content: { level: 2, text: 'print_string (Null-Terminated Strings)' } },
+    { id: '55', type: 'heading', content: { level: 2, text: '4.3 print_string (Null-Terminated Strings)' } },
     {
       id: '56',
       type: 'code',
@@ -179,15 +179,15 @@ export const interactiveReactTypescriptComponents: Blog = {
       }
     },
 
-    { id: '60', type: 'heading', content: { level: 1, text: 'Disk Reading Function (disk_read.asm)' } },
-    { id: '61', type: 'heading', content: { level: 2, text: 'INT 0x13, AH=0x02' } },
+    { id: '60', type: 'heading', content: { level: 1, text: '5.Disk Reading Function (disk_read.asm)' } },
+    { id: '61', type: 'heading', content: { level: 2, text: '5.1 INT 0x13, AH=0x02' } },
     {
       id: '62',
       type: 'text',
       content:
         'INT 0x13 (AH=0x02) reads sectors using CHS. Inputs: AL (count), CH/CL/DH (location), DL (drive), ES:BX (destination). CF clear on success, set on failure.'
     },
-    { id: '63', type: 'heading', content: { level: 2, text: 'Implementation and Error Handling' } },
+    { id: '63', type: 'heading', content: { level: 2, text: '5.2 Implementation and Error Handling' } },
     {
       id: '64',
       type: 'code',
@@ -208,8 +208,8 @@ export const interactiveReactTypescriptComponents: Blog = {
       }
     },
 
-    { id: '70', type: 'heading', content: { level: 1, text: 'Bootloader Logic (stage1_bootloader.asm)' } },
-    { id: '71', type: 'heading', content: { level: 2, text: 'Entry, Segments, and Message' } },
+    { id: '70', type: 'heading', content: { level: 1, text: '6.Bootloader Logic (stage1_bootloader.asm)' } },
+    { id: '71', type: 'heading', content: { level: 2, text: '6.1 Entry, Segments, and Message' } },
     {
       id: '72',
       type: 'code',
@@ -219,7 +219,7 @@ export const interactiveReactTypescriptComponents: Blog = {
           '[BITS 16]\n[ORG 0x7C00]\nstart:\n    xor ax, ax\n    mov ds, ax\n    mov es, ax\n    mov si, msg\n    call print_string\nmsg db "Reading sector 2...", 0'
       }
     },
-    { id: '73', type: 'heading', content: { level: 2, text: 'Read Sector 2 → 0x0000:0x0500, Print, Loop' } },
+    { id: '73', type: 'heading', content: { level: 2, text: '6.2 Read Sector 2 → 0x0000:0x0500, Print, Loop' } },
     {
       id: '74',
       type: 'code',
@@ -230,7 +230,7 @@ export const interactiveReactTypescriptComponents: Blog = {
       }
     },
 
-    { id: '80', type: 'heading', content: { level: 1, text: 'How It All Fits Together' } },
+    { id: '80', type: 'heading', content: { level: 1, text: '7.How It All Fits Together' } },
     {
       id: '81',
       type: 'text',
@@ -238,14 +238,14 @@ export const interactiveReactTypescriptComponents: Blog = {
         'Boot flow: BIOS loads sector 1 at 0x7C00 → bootloader prints a message → sets CHS and buffer → calls `read_sector` to load sector 2 at 0x0500 → prints data → halts in an infinite loop.'
     },
 
-    { id: '90', type: 'heading', content: { level: 1, text: 'Running the Project' } },
-    { id: '91', type: 'heading', content: { level: 2, text: 'Assemble with NASM' } },
+    { id: '90', type: 'heading', content: { level: 1, text: '8.Running the Project' } },
+    { id: '91', type: 'heading', content: { level: 2, text: '8.1 Assemble with NASM' } },
     {
       id: '92',
       type: 'code',
       content: { language: 'bash', code: 'nasm -f bin asm/stage1_bootloader.asm -o boot.bin' }
     },
-    { id: '93', type: 'heading', content: { level: 2, text: 'Run in QEMU' } },
+    { id: '93', type: 'heading', content: { level: 2, text: '8.2 Run in QEMU' } },
     {
       id: '94',
       type: 'code',
@@ -257,7 +257,7 @@ export const interactiveReactTypescriptComponents: Blog = {
       content:
         'Expected output: first line from the bootloader (“Reading sector 2...”), followed by the contents of sector 2. If you see “Disk Read Error”, the read failed or the target sector is empty.'
     },
-    { id: '96', type: 'heading', content: { level: 2, text: 'Modify and Rebuild' } },
+    { id: '96', type: 'heading', content: { level: 2, text: '8.3 Modify and Rebuild' } },
     {
       id: '97',
       type: 'list',
@@ -271,8 +271,8 @@ export const interactiveReactTypescriptComponents: Blog = {
       }
     },
 
-    { id: '100', type: 'heading', content: { level: 1, text: 'Troubleshooting & Common Errors' } },
-    { id: '101', type: 'heading', content: { level: 2, text: 'Black Screen in QEMU' } },
+    { id: '100', type: 'heading', content: { level: 1, text: '9.Troubleshooting & Common Errors' } },
+    { id: '101', type: 'heading', content: { level: 2, text: '9.1 Black Screen in QEMU' } },
     {
       id: '102',
       type: 'list',
@@ -284,7 +284,7 @@ export const interactiveReactTypescriptComponents: Blog = {
         ]
       }
     },
-    { id: '103', type: 'heading', content: { level: 2, text: '“Disk Read Error”' } },
+    { id: '103', type: 'heading', content: { level: 2, text: '9.2 “Disk Read Error”' } },
     {
       id: '104',
       type: 'list',
@@ -296,7 +296,7 @@ export const interactiveReactTypescriptComponents: Blog = {
         ]
       }
     },
-    { id: '105', type: 'heading', content: { level: 2, text: 'Loaded Message Not Showing' } },
+    { id: '105', type: 'heading', content: { level: 2, text: '9.3 Loaded Message Not Showing' } },
     {
       id: '106',
       type: 'list',
@@ -308,7 +308,7 @@ export const interactiveReactTypescriptComponents: Blog = {
         ]
       }
     },
-    { id: '107', type: 'heading', content: { level: 2, text: 'NASM Path/Include Errors' } },
+    { id: '107', type: 'heading', content: { level: 2, text: '9.4 NASM Path/Include Errors' } },
     {
       id: '108',
       type: 'code',
@@ -319,21 +319,21 @@ export const interactiveReactTypescriptComponents: Blog = {
       }
     },
 
-    { id: '120', type: 'heading', content: { level: 1, text: 'Conclusion' } },
+    { id: '120', type: 'heading', content: { level: 1, text: '10.Conclusion' } },
     {
       id: '121',
       type: 'text',
       content:
         'You built a functional 512-byte Stage-1 bootloader, learned BIOS interrupts (INT 0x10 for output, INT 0x13 for disk), wrote reusable print routines, handled disk reads and errors, and understood the boot sector signature and memory layout at 0x7C00 and 0x0500.'
     },
-    { id: '122', type: 'heading', content: { level: 2, text: 'Relevance to Modern Systems' } },
+    { id: '122', type: 'heading', content: { level: 2, text: '10.1 Relevance to Modern Systems' } },
     {
       id: '123',
       type: 'text',
       content:
         'Even with modern UEFI and 64-bit CPUs, all OSes must bootstrap from small, simple code. The principles you used here—initialization, loading, and control transfer—underpin modern boot chains (e.g., GRUB, UEFI stubs).'
     },
-    { id: '124', type: 'heading', content: { level: 2, text: 'Next Steps' } },
+    { id: '124', type: 'heading', content: { level: 2, text: '10.2 Next Steps' } },
     {
       id: '125',
       type: 'list',
@@ -348,8 +348,8 @@ export const interactiveReactTypescriptComponents: Blog = {
       }
     },
 
-    { id: '130', type: 'heading', content: { level: 1, text: 'Appendix' } },
-    { id: '131', type: 'heading', content: { level: 2, text: 'Full Source Listings' } },
+    { id: '130', type: 'heading', content: { level: 1, text: '11.Appendix' } },
+    { id: '131', type: 'heading', content: { level: 2, text: '11.1 Full Source Listings' } },
     {
       id: '132',
       type: 'code',
@@ -377,7 +377,7 @@ export const interactiveReactTypescriptComponents: Blog = {
           '; stage1_bootloader.asm\n[BITS 16]\n[ORG 0x7C00]\nstart:\n    xor ax, ax\n    mov ds, ax\n    mov es, ax\n\n    mov si, msg\n    call print_string\n\n    mov ax, 0x0000\n    mov es, ax\n    mov bx, 0x0500\n\n    mov dl, 0x00\n    mov ch, 0x00\n    mov cl, 0x02\n    mov dh, 0x00\n    call read_sector\n\n    mov si, 0x0500\n    call print_string\n    jmp $\n\nmsg db \"Reading sector 2...\", 0\n\n%include \"asm/print.asm\"\n%include \"asm/disk_read.asm\"\n\ntimes 510 - ($ - $$) db 0\n dw 0xAA55'
       }
     },
-    { id: '135', type: 'heading', content: { level: 2, text: 'Quick BIOS Interrupt Reference' } },
+    { id: '135', type: 'heading', content: { level: 2, text: '11.2 Quick BIOS Interrupt Reference' } },
     {
       id: '136',
       type: 'list',
@@ -390,7 +390,7 @@ export const interactiveReactTypescriptComponents: Blog = {
         ]
       }
     },
-    { id: '137', type: 'heading', content: { level: 2, text: 'Glossary' } },
+    { id: '137', type: 'heading', content: { level: 2, text: '11.3 Glossary' } },
     {
       id: '138',
       type: 'list',
@@ -406,7 +406,7 @@ export const interactiveReactTypescriptComponents: Blog = {
         ]
       }
     },
-    { id: '139', type: 'heading', content: { level: 2, text: 'Further Reading' } },
+    { id: '139', type: 'heading', content: { level: 2, text: '11.4 Further Reading' } },
     {
       id: '140',
       type: 'list',
