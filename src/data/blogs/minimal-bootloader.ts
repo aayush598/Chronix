@@ -425,7 +425,7 @@ export const interactiveReactTypescriptComponents: Blog = {
   ],
   author: authors.aayush,
   publishedAt: '2025-08-18T00:00:00Z',
-  updatedAt: '2025-08-18T00:00:00Z',
+  updatedAt: '2025-08-23T00:00:00Z',
   readingTime: 15,
   tags: ['bootloader', 'assembly', 'x86', 'osdev', 'bios', 'low-level'],
   coverImage: 'src/assets/images/simple-bootloader.png',
