@@ -9,11 +9,11 @@ function App() {
   const [currentBlog, setCurrentBlog] = useState<Blog | null>(null);
 
   useEffect(() => {
-    // Simple hash-based routing
-    const handleHashChange = () => {
-      const hash = window.location.hash;
-      if (hash.startsWith('#/blog/')) {
-        const slug = hash.replace('#/blog/', '');
+    // Simple path-based routing
+    const handleRouteChange = () => {
+      const path = window.location.pathname;
+      if (path.startsWith('/blog/')) {
+        const slug = path.replace('/blog/', '');
         const blog = blogs.find(b => b.slug === slug);
         if (blog) {
           setCurrentBlog(blog);
@@ -28,20 +28,24 @@ function App() {
       }
     };
 
-    handleHashChange(); // Check initial hash
-    window.addEventListener('hashchange', handleHashChange);
-    return () => window.removeEventListener('hashchange', handleHashChange);
+    handleRouteChange(); // Check initial path
+    window.addEventListener('popstate', handleRouteChange);
+    return () => window.removeEventListener('popstate', handleRouteChange);
   }, []);
 
   const handleBlogClick = (blogId: string) => {
     const blog = blogs.find(b => b.id === blogId);
     if (blog) {
-      window.location.hash = `/blog/${blog.slug}`;
+      window.history.pushState({}, '', `/blog/${blog.slug}`);
+      setCurrentBlog(blog);
+      setCurrentView('post');
     }
   };
 
   const handleBack = () => {
-    window.location.hash = '';
+    window.history.pushState({}, '', '/');
+    setCurrentView('list');
+    setCurrentBlog(null);
   };
 
   if (currentView === 'post' && currentBlog) {

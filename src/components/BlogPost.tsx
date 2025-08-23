@@ -37,7 +37,8 @@ export const BlogPost: React.FC<BlogPostProps> = ({ blog, onBack }) => {
     });
   };
 
-  const shareUrl = `${window.location.origin}/#/blog/${blog.slug}`;
+  const shareUrl = `${window.location.origin}/blog/${blog.slug}`;
+
   const shareText = `Check out this article: ${blog.title}`;
 
   const shareLinks = {
